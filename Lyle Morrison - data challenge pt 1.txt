@@ -1,0 +1,40 @@
+1. Show how many pageviews occured in the last week
+
+SELECT sum(pageviews) FROM ga_session_views where '8/4/2018' < hit_timestamp < '8/11/2018';
+
+
+
+2. Determine how many sessions have organic as a medium
+
+SELECT pageviews, session_id
+FROM ga_session_views 
+INNER JOIN [ga_session_features] ON [ga_session_views].session_id = ga_session_features.session_id 
+WHERE medium = 'organic';
+
+
+
+3. Create a list of all nodes with the number of pageviews that came from users with an organic
+medium in the last 30 days, with the highest number first.
+
+SELECT pageviews, node_id, session_id
+FROM ga_session_views 
+INNER JOIN [ga_session_features] ON [ga_session_views].session_id = ga_session_features.session_id 
+WHERE medium = 'organic'
+AND '7/11/2018' < hit_timestamp < '8/11/2018'
+ORDER BY pageviews DESC;
+
+
+
+4. Write a query about something that interests you and explain what it does
+
+SELECT *
+FROM ga_session_views
+INNER JOIN [ga_session_features] ON [ga_session_views].session_id = ga_session_features.session_id 
+GROUP BY device_category, DATEPART(HOUR, hit_timestamp) 
+ORDER BY sum(pageviews) DESC
+
+This query shows the sum of pageviews grouped first by device and then by the hour of the day.
+I'm interested to see how users are interacting with the site at different points during the day. 
+For example, they might be accessing the site on desktop during business hours (9am to 5pm) and then on mobile during non-business hours.
+Understanding this might help network engineers allocate computing resources more efficently.
+Or they might see that there is significatly more mobile traffic than anticipated and provoke them to optimize their site for mobile.
